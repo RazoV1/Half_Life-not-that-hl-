@@ -1,0 +1,7 @@
+{
+  "Bodies":["Body_RGBA"],
+  "Guns":["Gun_Laser","Gun_Shooter"],
+  "Shields":[""],
+  "Engines":[""],
+  "LifeModules":[""]
+}
