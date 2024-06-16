@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public GameManager Instance { get; private set; }
+    public static GameManager Instance { get; private set; }
 
     public InventoryModules inventoryModules;
     
@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
     {
         File.WriteAllText("Assets/JSONS/InventoryModules.json", JsonUtility.ToJson(Instance));
     }
+    
     
     [Serializable]
     public class InventoryModules

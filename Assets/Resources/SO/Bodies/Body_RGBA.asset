@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a3a7ec9b125c61408445c69ce2d02ae, type: 3}
-  m_Name: Gun_Laser
+  m_Script: {fileID: 11500000, guid: 2865393d8cd86d146bffc9a8058c6a51, type: 3}
+  m_Name: Body_RGBA
   m_EditorClassIdentifier: 
-  Hp: 0
-  Damage: 0
-  AttackSpeed: 0
+  jsonFile: {fileID: 4900000, guid: d6dc3cfa7f87d2544858bb7b3bc8e815, type: 3}
+  BodySprite: {fileID: 21300000, guid: be00b16ba97027e4f864871e3fef872b, type: 3}
+  Guns: []

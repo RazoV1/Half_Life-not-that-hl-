@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Spaceship", menuName = "SO/Spaceship")]
-public class SpaceshipSO : ScriptableObject
+[CreateAssetMenu(fileName = "New Spaceship", menuName = "SO/Body")]
+public class BodySO : ScriptableObject
 {
     public Sprite BodySprite;
     

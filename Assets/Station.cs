@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using TMPro;
+using UnityEngine.UI;
 
 public class Station : MonoBehaviour
 {
@@ -12,6 +14,8 @@ public class Station : MonoBehaviour
     public Coordinates LocalCoordinates;
 
     [SerializeField] private GameObject ListModules;
+    [SerializeField] private GameObject CellEmpty;
+    [SerializeField] private GameObject CellFile;
 
     [ContextMenu("Load")]
     public void LoadField()
@@ -19,8 +23,6 @@ public class Station : MonoBehaviour
         Spaceship = JsonUtility.FromJson<SpaceshipReader>(File.ReadAllText("Assets/Player.json"));
         LocalCoordinates = JsonUtility.FromJson<Coordinates>(File.ReadAllText("Assets/Resources/JSONS_Body/" + Spaceship.Body + ".json"));
     }
-    
-
     
     [ContextMenu("Save")]
     public void SaveField()
@@ -59,7 +61,7 @@ public class Station : MonoBehaviour
         Instantiator = Resources.Load<GameObject>("Instantiator");
         
         //Load Body
-        Sprite bodySprite = Resources.Load<Sprite>("Body/" + Spaceship.Body);
+        Sprite bodySprite = Resources.Load<BodySO>("SO/Bodies/" + Spaceship.Body).BodySprite;
 
         GameObject body = Instantiate(Instantiator);
         body.name = "Body";
@@ -90,7 +92,50 @@ public class Station : MonoBehaviour
     // 1 - Shields
     public void OpenModulesMenu(int index)
     {
-        
+        for(int j = 1; j < ListModules.transform.childCount; j++)
+        {
+            Destroy(ListModules.transform.GetChild(j).gameObject);
+        }
+        switch (index)
+        {
+            case 0:
+                string[] gunStrings = GameManager.Instance.inventoryModules.Guns;
+                List<GunSO> gunSOs = new List<GunSO>();
+                
+                for (int i = 0; i < gunStrings.Length; i++)
+                {
+                    gunSOs.Add(Resources.Load<GunSO>("SO/Guns/" + gunStrings[i]));
+                }
+
+                int count = 0;
+                
+                foreach (var gun in gunSOs)
+                {
+                    GameObject module = Instantiate(CellFile);
+                    
+                    module.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = gun.Icon;
+                    module.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = gun.Name;
+                    module.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = gun.Info;
+                    
+                    module.transform.SetParent(ListModules.transform);
+
+                    module.GetComponent<RectTransform>().localScale = Vector3.one;
+
+
+                    count++;
+                }
+
+                for (int k = count; k < 6; k++)
+                {
+                    GameObject emptyCell = Instantiate(CellEmpty);
+                    emptyCell.transform.SetParent(ListModules.transform);
+                    emptyCell.GetComponent<RectTransform>().localScale = Vector3.one;
+                }
+
+                ListModules.SetActive(true);
+                break;
+                
+        }
     }
 
 }
