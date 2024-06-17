@@ -8,7 +8,9 @@ using UnityEngine.UI;
 
 public class Station : MonoBehaviour
 {
-    private GameObject Instantiator;
+    public static Station Instance { get; private set; }
+    
+    [HideInInspector] public GameObject Instantiator;
     
     public SpaceshipReader Spaceship;
     public Coordinates LocalCoordinates;
@@ -16,6 +18,22 @@ public class Station : MonoBehaviour
     [SerializeField] private GameObject ListModules;
     [SerializeField] private GameObject CellEmpty;
     [SerializeField] private GameObject CellFile;
+
+    public ModuleSlot[] ModuleSlots;
+
+    public GameObject DrawedSpaceship;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogError("One more Station by name: " + gameObject.name);
+        }
+    }
 
     [ContextMenu("Load")]
     public void LoadField()
@@ -56,6 +74,26 @@ public class Station : MonoBehaviour
 
     private void Start()
     {
+        ModuleSlots = GameObject.FindObjectsOfType<ModuleSlot>();
+        DrawSpaceship();
+        UpdateSlots();
+    }
+
+    public void UpdateSlots()
+    {
+        foreach (var slot in ModuleSlots)
+        {
+            slot.DrawSlot();
+        }
+    }
+    
+    public void DrawSpaceship()
+    {
+        if (DrawedSpaceship != null)
+        {
+            Destroy(DrawedSpaceship);
+        }
+        
         LoadField();
 
         Instantiator = Resources.Load<GameObject>("Instantiator");
@@ -64,6 +102,7 @@ public class Station : MonoBehaviour
         Sprite bodySprite = Resources.Load<BodySO>("SO/Bodies/" + Spaceship.Body).BodySprite;
 
         GameObject body = Instantiate(Instantiator);
+        DrawedSpaceship = body;
         body.name = "Body";
         body.transform.position = Vector3.zero;
         body.GetComponent<SpriteRenderer>().sprite = bodySprite;
@@ -87,18 +126,16 @@ public class Station : MonoBehaviour
             gun.transform.position = new Vector3(LocalCoordinates.Guns[i].x, LocalCoordinates.Guns[i].y, 0);
         }
     }
-
-    // 0 - Guns
-    // 1 - Shields
-    public void OpenModulesMenu(int index)
+    
+    public void OpenModulesMenu(ModuleType type)
     {
         for(int j = 1; j < ListModules.transform.childCount; j++)
         {
             Destroy(ListModules.transform.GetChild(j).gameObject);
         }
-        switch (index)
+        switch (type)
         {
-            case 0:
+            case ModuleType.Gun:
                 string[] gunStrings = GameManager.Instance.inventoryModules.Guns;
                 List<GunSO> gunSOs = new List<GunSO>();
                 
@@ -116,6 +153,10 @@ public class Station : MonoBehaviour
                     module.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = gun.Icon;
                     module.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = gun.Name;
                     module.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = gun.Info;
+
+                    module.GetComponent<CellModule>().bodyPartSO = gun;
+                    module.GetComponent<CellModule>().selfType = gun.selfType;
+                    module.GetComponent<CellModule>().sprite = gun.Icon;
                     
                     module.transform.SetParent(ListModules.transform);
 
@@ -134,8 +175,15 @@ public class Station : MonoBehaviour
 
                 ListModules.SetActive(true);
                 break;
-                
         }
+    }
+    
+    public enum ModuleType
+    {
+        Gun,
+        Shield,
+        Engine,
+        LifeModule
     }
 
 }
