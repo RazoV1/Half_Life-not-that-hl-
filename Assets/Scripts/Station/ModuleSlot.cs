@@ -10,8 +10,6 @@ public class ModuleSlot : MonoBehaviour, IPointerClickHandler
     public Station.ModuleType selfType;
     public int SlotID;
 
-    public bool mouseOn;
-
     private Button selfButton;
     
     private void Start()
@@ -28,16 +26,76 @@ public class ModuleSlot : MonoBehaviour, IPointerClickHandler
             case Station.ModuleType.Gun:
                 if (Station.Instance.Spaceship.Guns.Length <= SlotID)
                 {
-                    GetComponent<Button>().interactable = false;
+                    selfButton.interactable = false;
                     break;
                 }
                 else if (Station.Instance.Spaceship.Guns[SlotID] == "None")
                 {
                     transform.GetChild(0).gameObject.SetActive(false);
+                    selfButton.interactable = true;
                     break;
                 }
                 transform.GetChild(0).gameObject.SetActive(true);
                 transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<GunSO>("SO/Guns/" + Station.Instance.Spaceship.Guns[SlotID]).Icon;
+
+                selfButton.interactable = true;
+                
+                break;
+            
+            case Station.ModuleType.Shield:
+                if (Station.Instance.Spaceship.Shields.Length <= SlotID)
+                {
+                    selfButton.interactable = false;
+                    break;
+                }
+                else if (Station.Instance.Spaceship.Shields[SlotID] == "None")
+                {
+                    transform.GetChild(0).gameObject.SetActive(false);
+                    selfButton.interactable = true;
+                    break;
+                }
+                transform.GetChild(0).gameObject.SetActive(true);
+                transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<ShieldSO>("SO/Shields/" + Station.Instance.Spaceship.Shields[SlotID]).Icon;
+                
+                selfButton.interactable = true;
+                
+                break;
+            
+            case Station.ModuleType.Engine:
+                if (Station.Instance.Spaceship.Engines.Length <= SlotID)
+                {
+                    selfButton.interactable = false;
+                    break;
+                }
+                else if (Station.Instance.Spaceship.Engines[SlotID] == "None")
+                {
+                    transform.GetChild(0).gameObject.SetActive(false);
+                    selfButton.interactable = true;
+                    break;
+                }
+                transform.GetChild(0).gameObject.SetActive(true);
+                transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<EngineSO>("SO/Engines/" + Station.Instance.Spaceship.Engines[SlotID]).Icon;
+                
+                selfButton.interactable = true;
+                
+                break;
+            
+            case Station.ModuleType.LifeModule:
+                if (Station.Instance.Spaceship.LifeModules.Length <= SlotID)
+                {
+                    selfButton.interactable = false;
+                    break;
+                }
+                else if (Station.Instance.Spaceship.LifeModules[SlotID] == "None")
+                {
+                    transform.GetChild(0).gameObject.SetActive(false);
+                    selfButton.interactable = true;
+                    break;
+                }
+                transform.GetChild(0).gameObject.SetActive(true);
+                transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<LifeModuleSO>("SO/LifeModules/" + Station.Instance.Spaceship.LifeModules[SlotID]).Icon;
+                
+                selfButton.interactable = true;
                 
                 break;
         }
@@ -49,11 +107,23 @@ public class ModuleSlot : MonoBehaviour, IPointerClickHandler
         {
             case Station.ModuleType.Gun:
                 Station.Instance.Spaceship.Guns[SlotID] = "None";
-                Station.Instance.SaveField();
-                Station.Instance.DrawSpaceship();
-                Station.Instance.UpdateSlots();
+                break;
+            
+            case Station.ModuleType.Shield:
+                Station.Instance.Spaceship.Shields[SlotID] = "None";
+                break;
+            
+            case Station.ModuleType.Engine:
+                Station.Instance.Spaceship.Engines[SlotID] = "None";
+                break;
+            
+            case Station.ModuleType.LifeModule:
+                Station.Instance.Spaceship.LifeModules[SlotID] = "None";
                 break;
         }
+        Station.Instance.SaveField();
+        Station.Instance.DrawSpaceship();
+        Station.Instance.UpdateSlots();
     }
     
     private void GetItemFromDraggable()
@@ -71,6 +141,18 @@ public class ModuleSlot : MonoBehaviour, IPointerClickHandler
                 case Station.ModuleType.Gun:
                     Station.Instance.Spaceship.Guns[SlotID] = DraggableItem.Instance.bodyPartSO.name;
                     break;
+                
+                case Station.ModuleType.Shield:
+                    Station.Instance.Spaceship.Shields[SlotID] = DraggableItem.Instance.bodyPartSO.name;
+                    break;
+                
+                case Station.ModuleType.Engine:
+                    Station.Instance.Spaceship.Engines[SlotID] = DraggableItem.Instance.bodyPartSO.name;
+                    break;
+                
+                case Station.ModuleType.LifeModule:
+                    Station.Instance.Spaceship.LifeModules[SlotID] = DraggableItem.Instance.bodyPartSO.name;
+                    break;
             }
             Station.Instance.SaveField();
             Station.Instance.DrawSpaceship();
@@ -82,6 +164,8 @@ public class ModuleSlot : MonoBehaviour, IPointerClickHandler
             }
             
             DraggableItem.Instance.Restore();
+
+            Station.Instance.UpdateSlots();
         }
     }
 

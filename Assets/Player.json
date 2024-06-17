@@ -1,1 +1,1 @@
-{"Body":"Body_RGBA","Guns":["None","None","None"]}
+{"Body":"Body_RGBA","Guns":["Gun_Shooter","Gun_Laser","Gun_Shooter"],"Shields":["Shield_Ferrum","Shield_Ferrum"],"Engines":["Engine_Moon"],"LifeModules":["LifeModule_FirstAid"]}

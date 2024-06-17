@@ -54,6 +54,9 @@ public class Station : MonoBehaviour
         public string Body;
 
         public string[] Guns;
+        public string[] Shields;
+        public string[] Engines;
+        public string[] LifeModules;
     }
     
     [System.Serializable]
@@ -114,7 +117,7 @@ public class Station : MonoBehaviour
         {
             if(Spaceship.Guns[i] == "None") continue;
             
-            Sprite gunSprite = Resources.Load<Sprite>("Gun/" + Spaceship.Guns[i]);
+            Sprite gunSprite = Resources.Load<Sprite>("Sprites/Gun/" + Spaceship.Guns[i]);
             
             
             GameObject gun = Instantiate(Instantiator);
@@ -125,7 +128,9 @@ public class Station : MonoBehaviour
             
             gun.transform.position = new Vector3(LocalCoordinates.Guns[i].x, LocalCoordinates.Guns[i].y, 0);
         }
+        
     }
+    
     
     public void OpenModulesMenu(ModuleType type)
     {
@@ -133,49 +138,75 @@ public class Station : MonoBehaviour
         {
             Destroy(ListModules.transform.GetChild(j).gameObject);
         }
+        int count = 0;
+        List<BodyPartSO> bodyPartsSO = new List<BodyPartSO>();
+        
         switch (type)
         {
             case ModuleType.Gun:
                 string[] gunStrings = GameManager.Instance.inventoryModules.Guns;
-                List<GunSO> gunSOs = new List<GunSO>();
                 
                 for (int i = 0; i < gunStrings.Length; i++)
                 {
-                    gunSOs.Add(Resources.Load<GunSO>("SO/Guns/" + gunStrings[i]));
+                    bodyPartsSO.Add(Resources.Load<BodyPartSO>("SO/Guns/" + gunStrings[i]));
                 }
-
-                int count = 0;
+                break;
+            
+            case ModuleType.Shield:
+                string[] shieldStrings = GameManager.Instance.inventoryModules.Shields;
                 
-                foreach (var gun in gunSOs)
+                for (int i = 0; i < shieldStrings.Length; i++)
                 {
-                    GameObject module = Instantiate(CellFile);
-                    
-                    module.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = gun.Icon;
-                    module.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = gun.Name;
-                    module.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = gun.Info;
-
-                    module.GetComponent<CellModule>().bodyPartSO = gun;
-                    module.GetComponent<CellModule>().selfType = gun.selfType;
-                    module.GetComponent<CellModule>().sprite = gun.Icon;
-                    
-                    module.transform.SetParent(ListModules.transform);
-
-                    module.GetComponent<RectTransform>().localScale = Vector3.one;
-
-
-                    count++;
+                    bodyPartsSO.Add(Resources.Load<BodyPartSO>("SO/Shields/" + shieldStrings[i]));
                 }
-
-                for (int k = count; k < 6; k++)
+                break;
+            
+            case ModuleType.Engine:
+                string[] engineStrings = GameManager.Instance.inventoryModules.Engines;
+                
+                for (int i = 0; i < engineStrings.Length; i++)
                 {
-                    GameObject emptyCell = Instantiate(CellEmpty);
-                    emptyCell.transform.SetParent(ListModules.transform);
-                    emptyCell.GetComponent<RectTransform>().localScale = Vector3.one;
+                    bodyPartsSO.Add(Resources.Load<BodyPartSO>("SO/Engines/" + engineStrings[i]));
                 }
-
-                ListModules.SetActive(true);
+                break;
+            
+            case ModuleType.LifeModule:
+                string[] lifeModuleStrings = GameManager.Instance.inventoryModules.LifeModules;
+                
+                for (int i = 0; i < lifeModuleStrings.Length; i++)
+                {
+                    bodyPartsSO.Add(Resources.Load<BodyPartSO>("SO/LifeModules/" + lifeModuleStrings[i]));
+                }
                 break;
         }
+        count = 0;
+                
+        foreach (var gun in bodyPartsSO)
+        {
+            GameObject module = Instantiate(CellFile);
+                    
+            module.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = gun.Icon;
+            module.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = gun.Name;
+            module.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = gun.Info;
+
+            module.GetComponent<CellModule>().bodyPartSO = gun;
+            module.GetComponent<CellModule>().selfType = gun.selfType;
+            module.GetComponent<CellModule>().sprite = gun.Icon;
+                    
+            module.transform.SetParent(ListModules.transform);
+
+            module.GetComponent<RectTransform>().localScale = Vector3.one;
+                    
+            count++;
+        }
+        for (int k = count; k < 6; k++)
+        {
+            GameObject emptyCell = Instantiate(CellEmpty);
+            emptyCell.transform.SetParent(ListModules.transform);
+            emptyCell.GetComponent<RectTransform>().localScale = Vector3.one;
+        }
+        
+        ListModules.SetActive(true);
     }
     
     public enum ModuleType

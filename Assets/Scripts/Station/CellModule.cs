@@ -24,9 +24,11 @@ public class CellModule : MonoBehaviour
 
     public void AddItemToDraggable()
     {
-        print("1");
-        //throw new NotImplementedException();
-
+        if (DraggableItem.Instance.currentItem != null)
+        {
+            DraggableItem.Instance.Restore();
+        }
+        
         DraggableItem.Instance.selfType = selfType;
         DraggableItem.Instance.bodyPartSO = bodyPartSO;
 
@@ -41,6 +43,10 @@ public class CellModule : MonoBehaviour
             if (slot.selfType == selfType && slot.GetComponent<Button>().interactable)
             {
                 slot.transform.GetChild(1).gameObject.SetActive(true);
+            }
+            else
+            {
+                slot.GetComponent<Button>().interactable = false;
             }
         }
 
